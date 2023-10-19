@@ -1,0 +1,87 @@
+.text-color-light {
+  color: azure;
+}
+
+.text-color-darker-light{
+  color: darkgrey;
+}
+
+.manga-body{
+  background-color: #212529;
+}
+
+.title-chapter{
+  padding-top: 3%;
+  padding-left: 2%;
+}
+
+
+.manga-page{
+  justify-content: center;
+  width: 90%;
+  padding-left: 10%;
+  flex-wrap: wrap;
+}
+
+.manga-panel{
+  width: 75%;
+}
+
+.settings-quality{
+  color: orange;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  padding-right: 18%;
+}
+
+.settings-quality:hover{
+  cursor: pointer;
+  opacity: 60%;
+}
+
+.menu-quality{
+  background-color: #262626;
+  position: absolute;
+  margin-left: 81.1%;
+} 
+
+.quality-text{
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: orange;
+}
+
+.quality-text:hover {
+  background-color: darkgoldenrod;
+  cursor: pointer;
+}
+
+.button-prev{
+  background-color: orange;
+  border-radius: 5px;
+  width: 9vh;
+  height: 4.3vh;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.button-prev:hover{
+  background-color: darkgoldenrod;
+}
+.button-next{
+  background-color: orange;
+  border-radius: 5px;
+  width: 9vh;
+  height: 4.3vh;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.button-next:hover{
+  background-color: darkgoldenrod;
+}
+
+.manga-pagination{
+  gap: 10vh;
+  margin-top: 1.3vh;
+  padding-bottom: 3vh;
+  justify-content: center;
+}

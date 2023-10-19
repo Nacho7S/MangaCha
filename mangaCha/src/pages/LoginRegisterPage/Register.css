@@ -1,0 +1,54 @@
+.register-img{
+  position: fixed;
+  top: 50%;
+  left:50%;
+  width: 50vh;
+  transform: translate(-50%, -50%);
+  opacity: 0%;
+  animation: showsUp 2.5s;
+}
+
+.form-register{
+  width: 50vh;
+  box-shadow: 4px 4px 5px 12px rgba(0,0,0,0.75);
+-webkit-box-shadow: 4px 4px 5px 12px rgba(0,0,0,0.75);
+-moz-box-shadow: 4px 4px 5px 12px rgba(0,0,0,0.75);
+padding: 4vh;
+border-radius: 2vh;
+opacity: 0%;
+background-color: #262626;
+color: orange;
+animation: showRegister 2.4s forwards;
+}
+
+.register{
+  display: flex;
+  justify-content: center;
+  margin-top: 15vh;
+}
+
+.bg-register{
+  background-color: #262626;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  position: fixed;
+}
+
+
+
+@keyframes showRegister {
+  0% {opacity: 0%;}
+  80% {opacity: 0%;}
+  100%{opacity: 100%;}
+}
+@keyframes showsUp {
+  0% {
+    top: 50%;
+    left: 50%; opacity: 100%; width: 0vh;}
+  60% {top: 50%; left: 50%;opacity: 95%; width: 50vh;}
+  90% {opacity: 2%;}
+  100%{top: 50%;
+    left: 50%;}
+}
+

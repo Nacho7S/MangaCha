@@ -1,0 +1,67 @@
+.banner {
+  position: absolute;
+  background-color: antiquewhite;
+  padding: 2%;
+  margin-top: 2%;
+  opacity: 100%;
+  border-radius: 9%;
+  font-family: sans-serif;
+}
+
+.card:hover{
+  cursor: pointer;
+  opacity: 60%;
+  color: 20%;
+}
+
+.manga-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  text-align: center; /* Center text horizontally */
+}
+
+.cover-manga {
+  object-fit: cover; /* Maintain aspect ratio and fill container */
+}
+.title {
+  max-height: 5em; /* Adjust the maximum height as needed */
+  overflow: hidden;
+  padding-right: 4%;
+  padding-left: 4%; 
+  text-overflow: ellipsis;
+  white-space: wrap;
+  margin-bottom: 5px; /* Add some space between title and genres */
+}
+
+.genre-tags {
+  display: grid;
+  grid-template-columns:auto auto auto;
+  margin-left: 3%;
+  
+}
+
+.genre {
+  text-align: center;
+  margin-right: 8px; /* Add some space between genre tags */
+  font-size: x-small;
+  border: 1px;
+  background-color: black;
+  color: white;
+  border-radius: 12%;
+  padding-left: 4%;
+  padding-right: 4%;
+}
+
+.ongoing {
+  background-color: brown;
+  font-weight: bold;
+  color: aliceblue;
+}
+
+.completed {
+  background-color: orange;
+  font-weight: bold;
+  color: aliceblue;
+}
+
