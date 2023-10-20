@@ -1,5 +1,5 @@
 import { BASE_URLS } from "../../config/url";
-import { CURRENT_USER, HIDE_LOGIN_MODAL, LOADING, LOGIN_USER, REGISTER_USER, SHOW_LOGIN_MODAL, SUCCESSS_FETCH_MANGA, SUCCESS_FETCH_CHAPTER_LIST, SUCCESS_FETCH_MANGA_DETAIL } from "./actionType";
+import { ADD_LIST_FAVOURITE, CURRENT_USER, CURRENT_USER_FAVOURITE, DELETE_FROM_FAVOURITE, HIDE_LOGIN_MODAL, LOADING, LOADING_FAVOURITE, LOADING_USER, LOGIN_USER, REGISTER_USER, SHOW_LOGIN_MODAL, SUCCESSS_FETCH_MANGA, SUCCESS_FETCH_CHAPTER_LIST, SUCCESS_FETCH_MANGA_DETAIL } from "./actionType";
 import Cookies from 'universal-cookie';
 const cookies = new Cookies(null, { path: '/' });
 
@@ -52,7 +52,14 @@ export function fetchMangaDetails(mangaId) {
       if (mangaId) {
         urls += `/${mangaId}`
       }
-      const res = await fetch(urls)
+      let res = await fetch(urls)
+      if (cookies.get("access_token")) {
+        res = await fetch(urls, {
+          headers: {
+            "Authorization":  cookies.get("access_token")
+          }
+        })
+      }
       const dataJson = await res.json()
       // console.log("data", dataJson)
       dispatch({
@@ -161,7 +168,7 @@ export function handleLogin(user) {
 export function getCurrentUser(access_token) {
   return async (dispatch) => {
     dispatch({
-      type: LOADING,
+      type: LOADING_USER,
       action: true
     })
     try {
@@ -181,7 +188,7 @@ export function getCurrentUser(access_token) {
       console.log(err);
     } finally {
       dispatch({
-        type: LOADING,
+        type: LOADING_USER,
         payload: false
       })
     }
@@ -191,8 +198,8 @@ export function getCurrentUser(access_token) {
 export function getFavouriteUser() {
   return async (dispatch) => {
     dispatch({
-      type: LOADING,
-      action: true
+      type: LOADING_FAVOURITE,
+      payload: true
     })
     try {
       const urls = `${BASE_URLS}/favourite`
@@ -201,13 +208,63 @@ export function getFavouriteUser() {
       })
       const dataJson = await res.json()
       console.log(dataJson);
+      dispatch({
+        type: CURRENT_USER_FAVOURITE,
+        payload: dataJson.mangaList
+      })
     } catch (err) {
       console.log(err);
     } finally {
       dispatch({
-        type: LOADING,
-        action: false
+        type: LOADING_FAVOURITE,
+        payload: false
       })
+    }
+  }
+}
+
+export function addMangaFavourite(mangaId) {
+  return async (dispatch) => {
+    try {
+      const urls = `${BASE_URLS}/favourite`
+      const res = await fetch(urls, {
+        method: 'POST',
+        body: JSON.stringify(mangaId),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": cookies.get("access_token"),
+        }
+      })
+      const dataJson = await res.json()
+      dispatch({
+        type: ADD_LIST_FAVOURITE,
+        payload: dataJson
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
+
+export function deleteMangaFavourite(mangaId) {
+  return async (dispatch) => {
+    try {
+      const urls = `${BASE_URLS}/favourite`
+      const res = await fetch(urls, {
+        method: 'DELETE',
+        body: JSON.stringify(mangaId),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": cookies.get("access_token"),
+        }
+      })
+      const dataJson = await res.json()
+      dispatch({
+        type: DELETE_FROM_FAVOURITE,
+        payload: dataJson
+      })
+    } catch (err) {
+      console.log(err);
     }
   }
 }

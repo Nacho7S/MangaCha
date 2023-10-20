@@ -1,4 +1,4 @@
-import { CURRENT_USER, LOADING } from "../Actions/actionType"
+import { CURRENT_USER, LOADING_USER } from "../Actions/actionType"
 
 const initialState = {
   currentUserData: '',
@@ -12,7 +12,7 @@ const currentUserReducer = (state = initialState, action) => {
         ...state,
         currentUserData: action.payload
       }
-    case LOADING:
+    case LOADING_USER:
       return {
         ...state,
         userLoading: action.payload
