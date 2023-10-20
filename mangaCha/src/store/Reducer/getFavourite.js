@@ -1,7 +1,9 @@
-import { CURRENT_USER_FAVOURITE, LOADING } from "../Actions/actionType"
+import { ADD_LIST_FAVOURITE, CURRENT_USER_FAVOURITE, DELETE_FROM_FAVOURITE, LOADING_FAVOURITE } from "../Actions/actionType"
 
 const initialState = {
   favourites: [],
+  addedFavourite: '',
+  deleteFavourite: '',
   loadingFavourites: false
 }
 
@@ -12,7 +14,17 @@ const favouritesMangaReducer = (state = initialState, action) => {
         ...state,
         favourites: action.payload,
       }
-    case LOADING:
+    case ADD_LIST_FAVOURITE:
+      return {
+        ...state,
+        addedFavourite: action.payload
+      }
+    case DELETE_FROM_FAVOURITE:
+      return {
+        ...state,
+        deleteFavourite: action.payload
+      }
+    case LOADING_FAVOURITE:
       return {
         ...state,
         loadingFavourites: action.payload

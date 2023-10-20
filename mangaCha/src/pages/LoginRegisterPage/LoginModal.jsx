@@ -9,8 +9,7 @@ import {
 } from "../../store/Actions/actionCreator";
 import { Link, useNavigate } from "react-router-dom";
 import GoogleIcon from '@mui/icons-material/Google';
-import Cookies from 'universal-cookie';
-const cookies = new Cookies(null ,{ path: '/' });
+
 
 export const LoginPage = () => {
   const navigate = useNavigate();

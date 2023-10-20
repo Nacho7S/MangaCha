@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMangaDetails } from "../../store/Actions/actionCreator";
+import { addMangaFavourite, deleteMangaFavourite, fetchMangaDetails, getFavouriteUser } from "../../store/Actions/actionCreator";
 import { mangaDexImageUrl } from "../../config/url";
 import "./MangaDetails.css";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -9,19 +9,23 @@ import Preloader from "../../components/Preloaders/Preloader";
 import { BackButton } from "../../components/backButton/BackButton";
 
 export default function MangaDetails() {
-  const currentSearch = localStorage.getItem("search") 
+  const currentSearch = localStorage.getItem("search")
   const navigate = useNavigate()
   const { mangaId } = useParams();
   const dispatch = useDispatch();
   const { manga, mangaLoading } = useSelector((state) => state.mangaDetails);
+  const { addedFavourite, deleteFavourite } = useSelector((state) => state.userFavourites);
   const mangaDetails = manga?.mangaDetails?.data;
   const titleDetails = mangaDetails?.attributes?.title.en;
   const slugDetails = titleDetails
-  ?.replace(/\?/g, '') 
-  .split(' ') 
-  .filter(word => word) 
-  .join('-');
+    ?.replace(/\?/g, '')
+    .split(' ')
+    .filter(word => word)
+    .join('-');
   const description = mangaDetails?.attributes.description.en;
+  const [fav, setFav] = useState(false)
+  console.log(manga, mangaLoading);
+
 
   const authors = mangaDetails?.relationships.map((rel) => {
     if (rel.type === "author") {
@@ -35,31 +39,40 @@ export default function MangaDetails() {
           </div>
           <div className="display-flex-row social-media">
             {author?.twitter ? (
-            <a className="app-used" href={author?.twitter}>Twitter</a>
+              <a className="app-used" href={author?.twitter}>Twitter</a>
             ) : <></>}
             {author?.pixiv ? (
-            <a className="app-used" href={author?.pixiv}>Pixiv</a>
+              <a className="app-used" href={author?.pixiv}>Pixiv</a>
             ) : <></>}
             {author?.website ? (
-            <a className="app-used" href={author?.website}>Website</a>
+              <a className="app-used" href={author?.website}>Website</a>
             ) : (<></>)}
             {author?.tumblr ? (
-            <a className="app-used" href={author?.tumblr}>Tumblr</a>
+              <a className="app-used" href={author?.tumblr}>Tumblr</a>
             ) : (<></>)}
             {author?.youtube ? (
               <a className="app-used" href={author?.youtube}>Youtube</a>
-            ): (<></>)}
+            ) : (<></>)}
           </div>
         </>
       );
     }
   });
 
+  
   useEffect(() => {
     dispatch(fetchMangaDetails(mangaId));
   }, []);
 
-  // console.log(manga);
+  useEffect(() => {
+    if (manga?.isFavorite) {
+      setFav(true)
+    } else if (!manga.isFavorite){
+      setFav(false)
+    }
+  }, [manga?.isFavorite])
+
+  console.log(fav);
 
   const renderChapterList = () => {
     const volumes = manga?.chapters?.volumes;
@@ -77,7 +90,7 @@ export default function MangaDetails() {
             {Object.keys(volume.chapters).map((chapterNumber) => {
               const chapter = volume.chapters[chapterNumber];
               return (
-                <li onClick={() => navigate(`/manga/${slugDetails}/chapter-${chapter.chapter}/${chapter.id}`) } className="chapter" key={chapterNumber}>
+                <li onClick={() => navigate(`/manga/${slugDetails}/chapter-${chapter.chapter}/${chapter.id}`)} className="chapter" key={chapterNumber}>
                   Chapter {chapterNumber}
                 </li>
               );
@@ -88,6 +101,25 @@ export default function MangaDetails() {
     });
   };
 
+  const handleAddFavourite = () => {
+    setFav(true)
+    dispatch(addMangaFavourite(mangaId))
+    dispatch(getFavouriteUser())
+  }
+
+  const handleDeleteFavourite = () => {
+    setFav(false)
+    dispatch(deleteMangaFavourite(mangaId))
+    dispatch(getFavouriteUser())
+  }
+  console.log(addedFavourite, deleteFavourite);
+  const renderFavouriteButtom = () => {
+    if (fav) {
+      return <button className="btn btn-dark border" onClick={handleDeleteFavourite}>Remove From Favourite</button>
+    } else if (!fav) {
+      return <button className="btn btn-dark border" onClick={handleAddFavourite}>Add to Favourites</button>
+    }
+  }
   return (
     <>
       {mangaLoading ? (
@@ -126,8 +158,8 @@ export default function MangaDetails() {
           </div>
           <div className="div-details-right text-color-orange">
             <div className="header-title">
-              <h4>{titleDetails}</h4>
-              <button className="btn btn-dark border">Add to Favourites</button>
+                <h4>{titleDetails}</h4>
+                {renderFavouriteButtom()}
             </div>
             <div className="display-flex-row mb-2 tags">
               {mangaDetails?.attributes.tags.map((tag) => (

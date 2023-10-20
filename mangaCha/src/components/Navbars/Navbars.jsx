@@ -145,7 +145,7 @@ export const Navbars = () => {
                 History
               </NavLink>
             </Nav>
-            <Form inline>
+            <Form inline onSubmit={onSubmitSearch}>
               <Row>
                 <Col xs="auto">
                   <Form.Control
