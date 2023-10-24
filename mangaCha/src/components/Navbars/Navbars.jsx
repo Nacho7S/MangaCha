@@ -182,7 +182,7 @@ export const Navbars = () => {
                   <Nav>
                     <NavDropdown
                       id="nav-dropdown-dark-example"
-                      title={currentUserData.user.username}
+                      title={currentUserData?.user?.username}
                         menuVariant="dark"
                         className="mt-1"
                     >

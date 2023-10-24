@@ -1,7 +1,7 @@
 import { ADD_LIST_FAVOURITE, CURRENT_USER_FAVOURITE, DELETE_FROM_FAVOURITE, LOADING_FAVOURITE } from "../Actions/actionType"
 
 const initialState = {
-  favourites: [],
+  favourites: {},
   addedFavourite: '',
   deleteFavourite: '',
   loadingFavourites: false

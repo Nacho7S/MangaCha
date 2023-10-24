@@ -29,16 +29,16 @@ useEffect(() => {
 }, [currentPage]);
 
   useEffect(() => {
-    setTotalPages(Math.floor(mangas.total / mangas.limit));
+    setTotalPages(Math.ceil(mangas.total / mangas.limit));
   }, [mangas]);
 
   const fetchMangasPage = (page) => {
     console.log(page, " ini page");
     let offset = (page - 1) * mangas.limit;
     console.log(offset, "offset");
-    if (offset > 0) {
-      offset++;
-    }
+    // if (offset > 0) {
+    //   offset++;
+    // }
 
     dispatch(fetchMangas("", offset));
   };
@@ -59,11 +59,14 @@ useEffect(() => {
 
   return (
     <>
+      <div className="background-set bg-dark">
+
+      </div>
       {mangasLoading ? (
         <Preloader />
       ) : (
         <>
-          <div className="manga bg-dark">
+          <div className="manga">
             {mangas?.data?.map((manga) => (
               <MangaComponent manga={manga} />
             ))}

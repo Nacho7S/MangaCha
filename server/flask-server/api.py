@@ -182,6 +182,7 @@ def getCurrentUser(currentUser):
 @app.route("/favourite", methods=["POST"])
 @token_required
 def addFavouriteManga(currentUser):
+    print(request.headers, "headers")
     if request.headers["Content-Type"] == "application/x-www-form-urlencoded":
         print(request.form)
         result = Model.addMangaFavourites(json.dumps(request.form), currentUser)
@@ -216,11 +217,17 @@ def removeFavouriteManga(currentUser):
 @app.route("/favourite", methods=["GET"])
 @token_required
 def getAllFavouriteMangas(currentUser):
-    mangas = Model.getAllFavouriteMangasByUserId(currentUser.id)
-    print(mangas, "ini manga")
+    args = request.args
+    offsetQuery = args.get("offset")
+    limit = 10
+    offset = 0
+    if offsetQuery :
+        offset = offsetQuery
+    print(offsetQuery)
+    mangas = Model.getAllFavouriteMangasByUserId(currentUser.id, limit, offset)
+    print (mangas, "mangas")
     data = []
-
-    for i in mangas:
+    for i in mangas['mangasList']:
         mangaId = i["mangaId"]
         urlDetails = f"https://api.mangadex.org/manga/{mangaId}?includes%5B%5D=manga&includes%5B%5D=cover_art&includes%5B%5D=author&includes%5B%5D=artist&includes%5B%5D=tag&includes%5B%5D=creator"
 
@@ -232,7 +239,7 @@ def getAllFavouriteMangas(currentUser):
         except requests.exceptions.RequestException as e:
             return jsonify({"error": str(e)}), 500
 
-    return jsonify({"mangaList": data})
+    return jsonify({"mangaList": data, "totalData": mangas['totalData'], "limit": limit, "offset": offset})
 
 
 if __name__ == "__main__":

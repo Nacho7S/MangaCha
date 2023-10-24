@@ -6,3 +6,4 @@ bcrypt
 flask-cors
 requests
 python-dotenv
+redis

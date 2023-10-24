@@ -195,14 +195,17 @@ export function getCurrentUser(access_token) {
   }
 }
 
-export function getFavouriteUser() {
+export function getFavouriteUser(offset) {
   return async (dispatch) => {
     dispatch({
       type: LOADING_FAVOURITE,
       payload: true
     })
     try {
-      const urls = `${BASE_URLS}/favourite`
+      let urls = `${BASE_URLS}/favourite`
+      if (offset) {
+        urls += `?offset=${offset}`
+      }
       const res = await fetch(urls, {
         headers: { "Authorization": cookies.get("access_token") }
       })
@@ -210,7 +213,7 @@ export function getFavouriteUser() {
       console.log(dataJson);
       dispatch({
         type: CURRENT_USER_FAVOURITE,
-        payload: dataJson.mangaList
+        payload: dataJson
       })
     } catch (err) {
       console.log(err);
