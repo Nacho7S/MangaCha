@@ -1,0 +1,40 @@
+.history-page{
+  /* height: 100%;  */
+  padding: 5vh;
+  padding-bottom: 10%;
+}
+
+.history-card{
+  margin-top: 5vh;
+  display: flex;
+  flex-direction: column;
+  /* background-color: aqua; */
+  margin-bottom: 1vh;
+  margin-left: 7vh;
+  border: 0.3vh solid orange;
+  padding: 1vh;
+  border-radius: 2vh;
+}
+
+.history-card:hover{
+  opacity: 40%;
+  background-color: black;
+  
+}
+
+.history-content{
+  display: flex;
+  flex-direction: row;
+  gap: 2vh;
+}
+
+.history-content img{
+  object-fit: cover;
+  max-width: 200px;
+  max-height: 250px;
+  margin-right: 10px;
+}
+
+.history-detail {
+  color: orange;
+}

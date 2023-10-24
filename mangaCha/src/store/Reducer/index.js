@@ -16,7 +16,7 @@ const rootReducer = combineReducers({
   registerUser: registerReducer,
   loginUser: loginReducer,
   currentUser: currentUserReducer,
-  userFavourites: favouritesMangaReducer
+  userFavourites: favouritesMangaReducer,
 })
 
 export default rootReducer

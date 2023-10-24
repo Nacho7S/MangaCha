@@ -97,17 +97,25 @@ class Model:
   @staticmethod
   def addMangaFavourites(data, user):
     try:
-       print("masuk")
-       data_load = json.loads(data)
-       mangaId = data_load["mangaId"]
-       print(mangaId, user.id, currentDate)
-       sqlQueries = f'INSERT INTO "Favourites"("userId", "mangaId", "addedAt") VALUES (%s, %s, %s) RETURNING *;'
-       cursor.execute(sqlQueries,(user.id, mangaId, currentDate))
-       dataFavourites = cursor.fetchone()
-       recon.commit()
-       if dataFavourites:
-          print("successfully added to favourite list")
-          return "success"
+      print("masuk")
+      print(data, user)
+      data_load = json.loads(data)
+      print(len(data_load))
+      print(*data_load)
+      print ("mangaId" in data_load)
+      mangaId = ''
+      if "mangaId" in data_load:
+        mangaId = data_load["mangaId"]
+      else :
+        mangaId = json.loads(*data_load)
+      print(mangaId, user.id, currentDate)
+      sqlQueries = f'INSERT INTO "Favourites"("userId", "mangaId", "addedAt") VALUES (%s, %s, %s) RETURNING *;'
+      cursor.execute(sqlQueries,(user.id, mangaId, currentDate))
+      dataFavourites = cursor.fetchone()
+      recon.commit()
+      if dataFavourites:
+        print("successfully added to favourite list")
+        return "success"
     except(Exception, Error) as error:
       print(error)
       if "duplicate key value violates unique constraint" in str(error):
@@ -119,7 +127,11 @@ class Model:
   def removeMangaFromFavourites(data, user):
     try:
       data_load = json.loads(data)
-      mangaId = data_load["mangaId"]
+      angaId = ''
+      if "mangaId" in data_load:
+        mangaId = data_load["mangaId"]
+      else :
+        mangaId = json.loads(*data_load)
       sqlDeleteFavourites = f'DELETE FROM "Favourites" WHERE ("userId"=%s AND "mangaId"=%s) Returning *'
       cursor.execute(sqlDeleteFavourites, (user.id, mangaId))
       data = cursor.fetchone()
@@ -134,23 +146,23 @@ class Model:
       return ({"Error": error})
   
   @staticmethod
-  def getAllFavouriteMangasByUserId(userId):
+  def getAllFavouriteMangasByUserId(userId, limit, offset):
     try:
-      sqlQuery = f'SELECT * FROM "Favourites" WHERE "userId"=%s'
-      cursor.execute(sqlQuery, (str(userId)))
-      result = cursor.fetchall()
-      print (result)
-      if not result:
-          return {"Error":"No Data Found"}
-      mangasList = []
-      for row in result:
-        print(row[2])
-        mangasList.append({"mangaId":row[2]})
-      print(mangasList)
-      return mangasList
-    except (Exception, Error )as e:
-      print(e)
-      return {"Error":e}
+        sqlQuery = 'SELECT * FROM "Favourites" WHERE "userId" = %s ORDER BY "addedAt" DESC LIMIT %s OFFSET %s;'
+        cursor.execute(sqlQuery, (userId, limit, offset))
+        mangasList = []
+        for row in cursor.fetchall():
+            mangasList.append({"mangaId": row[2]})
+        sqlTotalData = 'SELECT COUNT("userId") FROM "Favourites" WHERE "userId" = %s;'
+        cursor.execute(sqlTotalData, (userId,))
+        count = cursor.fetchone()[0]
+        print (mangasList, count)
+        return {"mangasList": mangasList, "totalData": count}
+
+    except (Exception, Error) as e:
+        print(e)
+        return {"Error": str(e)}
+
     
   @staticmethod
   def isMangaInFavoriteList(userId, mangaId):

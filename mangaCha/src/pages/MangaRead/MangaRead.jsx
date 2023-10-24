@@ -21,7 +21,12 @@ export const MangaRead = () => {
   const { chapters, chaptersLoading } = useSelector(
     (state) => state.chapterList
   );
+
   const { manga, mangaLoading } = useSelector((state) => state.mangaDetails);
+  const [cover, setCover] = useState(manga?.mangaDetails?.data?.relationships.find(
+    (rel) => rel.type === "cover_art"
+  ).attributes.fileName);
+  console.log(manga);
   const [openQuality, setOpenQuality] = useState(false);
   const [showPaginate, setShowPaginate] = useState({
     next: true,
@@ -36,6 +41,8 @@ export const MangaRead = () => {
   ).id;
   const currentChapter = chapters?.dataChapters?.data?.attributes?.chapter;
 
+  // console.log(mangaName, mangaId,chapter, chapterId);
+
   const openQualityMenu = () => {
     setOpenQuality(!openQuality);
   };
@@ -47,7 +54,11 @@ export const MangaRead = () => {
       setOpenQuality(false); // Close the quality menu
     }, 1000); // Simulating a delay, you can adjust the duration as needed
   };
-
+  const hash = chapters?.chapter?.chapter?.hash;
+  const chapterImgData = chapters?.chapter?.chapter?.data;
+  const chapterImgDataSaver = chapters?.chapter?.chapter?.dataSaver;
+  
+  // console.log(mangaDexChapter, hash, chapterImgData);
   const renderImages = () => {
     if (quality.value === "highQuality") {
       return (
@@ -91,21 +102,26 @@ export const MangaRead = () => {
     await dispatch(fetchChapter(chapterId));
   };
 
+ 
+
   useEffect(() => {
     fetchInitialData();
+    addMangaHistory()
+    setCover(manga?.mangaDetails?.data?.relationships.find(
+      (rel) => rel.type === "cover_art"
+    ).attributes.fileName)
   }, [mangaId, chapterId]);
 
+  console.log(cover);
+  
   const handleChangeChapter = (action) => {
     const volumes = manga?.chapters?.volumes;
     let currentVolume = chapters?.dataChapters?.data?.attributes.volume;
-
     if (!volumes) {
       return null;
     }
 
-    // Get the current volume object
     let currentVolumeObj = volumes[currentVolume];
-
     if (!currentVolumeObj) {
       currentVolumeObj = volumes["none"];
     }
@@ -176,8 +192,7 @@ export const MangaRead = () => {
             Number
           );
           const nextMinChapterNumber = Math.min(...chapterNumbers);
-          const nextChapterVolumeObj =
-            nextVolumeObj.chapters[nextMinChapterNumber];
+          const nextChapterVolumeObj = nextVolumeObj.chapters[nextMinChapterNumber];
           navigate(
             `/manga/${mangaName}/chapter-${nextChapterVolumeObj.chapter}/${nextChapterVolumeObj.id}`
           );
@@ -218,17 +233,42 @@ export const MangaRead = () => {
     );
   };
 
-  const hash = chapters?.chapter?.chapter?.hash;
-  const chapterImgData = chapters?.chapter?.chapter?.data;
-  const chapterImgDataSaver = chapters?.chapter?.chapter?.dataSaver;
+  
+
+  function addMangaHistory() {
+    const currentHistory = JSON.parse(localStorage.getItem("history"))
+    const objHistory = {
+      n: mangaName,
+      mId: mangaId,
+      i : cover,
+      c: chapter.split('chapter-')[1],
+      cId: chapterId,
+    };
+    let dataHistory = [];
+    if (currentHistory) {
+      dataHistory = currentHistory;
+      dataHistory.push(objHistory);
+      const reverseArr = dataHistory.reverse()
+      const unique = dataHistory.filter((obj, index) => {
+        const findByName = reverseArr.findIndex((mangaItem) => { return mangaItem.n === obj.n }) === index
+        return findByName
+      })
+      localStorage.setItem("history", JSON.stringify(unique));
+    } else {
+      dataHistory.push(objHistory);
+      localStorage.setItem("history", JSON.stringify(dataHistory));
+    }
+    
+    console.log(dataHistory);
+  }
 
   return (
     <>
       {(mangaLoading || chaptersLoading) && !manga && !chapters ? (
-        <Preloader/>
+        <Preloader />
       ) : (
-          <div className="manga-body">
-            <BackButton path={ `/manga/${mangaId}` } />
+        <div className="manga-body">
+          <BackButton path={`/manga/${mangaId}`} />
           <div className="title-chapter">
             <h1 className="text-color-light">CHAPTER - {currentChapter}</h1>
             <h4 className="text-color-darker-light">
