@@ -14,7 +14,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Preloader from "../../components/Preloaders/Preloader";
 import { BackButton } from "../../components/backButton/BackButton";
 
-export const MangaRead = () => {
+export const MangaRead = ({ qualitySpeed }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
@@ -23,7 +23,7 @@ export const MangaRead = () => {
   const { chapters, chaptersLoading } = useSelector(
     (state) => state.chapterList
   );
-
+    console.log(qualitySpeed);
   const { manga, mangaLoading } = useSelector((state) => state.mangaDetails);
   const [cover, setCover] = useState(manga?.mangaDetails?.data?.relationships.find(
     (rel) => rel.type === "cover_art"
@@ -82,7 +82,7 @@ export const MangaRead = () => {
   // console.log(window.location.pathname);
   
   const renderImages = () => {
-    if (quality.value === "highQuality") {
+    if ( qualitySpeed === 'highQuality' || quality.value === "highQuality") {
       return (
         <>
           {quality.loading || chaptersLoading ? (
@@ -100,7 +100,7 @@ export const MangaRead = () => {
       );
     }
 
-    if (quality.value === "lowQuality") {
+    if (qualitySpeed === 'lowQuality' || quality.value === "lowQuality") {
       return (
         <>
           {quality.loading || chaptersLoading ? (
