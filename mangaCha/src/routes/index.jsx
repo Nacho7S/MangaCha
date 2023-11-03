@@ -10,6 +10,7 @@ import { MangaSearched } from "../pages/HomePage/MangaSearched";
 import { MangaRead } from "../pages/MangaRead/mangaRead";
 import { LoginPage } from "../pages/LoginRegisterPage/LoginModal";
 import { RegisterPage } from "../pages/LoginRegisterPage/RegisterPage";
+import { TrackSpeedInternet } from "../utils/trackSpeedInternet";
 
   export const router = createBrowserRouter([
     {
@@ -34,7 +35,7 @@ import { RegisterPage } from "../pages/LoginRegisterPage/RegisterPage";
         },
         {
           path: '/manga/:mangaName/:chapter/:chapterId',
-          element: <MangaRead />,
+          element: <TrackSpeedInternet/>
         },
         {
           path: '/favourite',
