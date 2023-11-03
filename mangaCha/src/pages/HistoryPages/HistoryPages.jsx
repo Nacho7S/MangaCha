@@ -14,7 +14,7 @@ export const HistoryPages = () => {
       {historyManga ? (
     <div className="bg-dark history-page">
           {historyManga?.map(el => (
-            <div className="history-card" onClick={() => navigate(`/manga/${el.n}/chapter-${el.c}/${el.cId}`)}>
+            <div className="history-card" onClick={() => navigate(`/manga/${el.n}/chapter-${el.c}/${el.cId}?mId=${el.mId}`)}>
               <div className="history-content">
                 <img src={mangaDexImageUrl + el.mId + "/" + el.i} />
                 <div className="history-detail">

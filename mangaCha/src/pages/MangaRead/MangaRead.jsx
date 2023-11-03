@@ -17,6 +17,8 @@ import { BackButton } from "../../components/backButton/BackButton";
 export const MangaRead = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const query = new URLSearchParams(location.search);
+  const mangaId = query?.get("mId")
   const { mangaName, chapter, chapterId } = useParams();
   const { chapters, chaptersLoading } = useSelector(
     (state) => state.chapterList
@@ -36,9 +38,9 @@ export const MangaRead = () => {
     value: "highQuality",
     loading: false,
   });
-  const mangaId = chapters?.dataChapters?.data?.relationships.find(
-    (rel) => rel.type === "manga"
-  ).id;
+  // const mangaId = chapters?.dataChapters?.data?.relationships.find(
+  //   (rel) => rel.type === "manga"
+  // ).id;
   const currentChapter = chapters?.dataChapters?.data?.attributes?.chapter;
 
   // console.log(mangaName, mangaId,chapter, chapterId);
@@ -59,6 +61,26 @@ export const MangaRead = () => {
   const chapterImgDataSaver = chapters?.chapter?.chapter?.dataSaver;
   
   // console.log(mangaDexChapter, hash, chapterImgData);
+  const fetchInitialData = async () => {
+    await dispatch(fetchChapter(chapterId));
+    await dispatch(fetchMangaDetails(mangaId));
+  };
+
+ 
+
+  useEffect(() => {
+    fetchInitialData();
+    addMangaHistory()
+    if (manga) {
+      setCover(manga?.mangaDetails?.data?.relationships.find(
+        (rel) => rel.type === "cover_art"
+      ).attributes.fileName)
+    }
+  }, [mangaId, chapterId]);
+
+  // console.log(window.location.pathname === `/manga/${mangaName}/${chapter}/${chapterId}`);
+  // console.log(window.location.pathname);
+  
   const renderImages = () => {
     if (quality.value === "highQuality") {
       return (
@@ -97,20 +119,7 @@ export const MangaRead = () => {
     }
   };
 
-  const fetchInitialData = async () => {
-    await dispatch(fetchMangaDetails(mangaId));
-    await dispatch(fetchChapter(chapterId));
-  };
-
- 
-
-  useEffect(() => {
-    fetchInitialData();
-    addMangaHistory()
-    setCover(manga?.mangaDetails?.data?.relationships.find(
-      (rel) => rel.type === "cover_art"
-    ).attributes.fileName)
-  }, [mangaId, chapterId]);
+  
 
   console.log(cover);
   
@@ -140,7 +149,7 @@ export const MangaRead = () => {
         const currentChapterObj =
           currentVolumeObj.chapters[previousChapterNumber];
         navigate(
-          `/manga/${mangaName}/chapter-${currentChapterObj.chapter}/${currentChapterObj.id}`
+          `/manga/${mangaName}/chapter-${currentChapterObj.chapter}/${currentChapterObj.id}?mId=${mangaId}`
         );
       } else {
         let previousVolume = currentVolume - 1;
@@ -162,7 +171,7 @@ export const MangaRead = () => {
           const previousChapterVolumeObj =
             previousVolumeObj.chapters[previousMaxChapterNumber];
           navigate(
-            `/manga/${mangaName}/chapter-${previousChapterVolumeObj.chapter}/${previousChapterVolumeObj.id}`
+            `/manga/${mangaName}/chapter-${previousChapterVolumeObj.chapter}/${previousChapterVolumeObj.id}?mId=${mangaId}`
           );
         } else {
           setShowPaginate({ ...showPaginate, [action]: false });
@@ -178,7 +187,7 @@ export const MangaRead = () => {
         const currentChapterObj = currentVolumeObj.chapters[nextChapterNumber];
         console.log(currentChapterObj);
         navigate(
-          `/manga/${mangaName}/chapter-${currentChapterObj.chapter}/${currentChapterObj.id}`
+          `/manga/${mangaName}/chapter-${currentChapterObj.chapter}/${currentChapterObj.id}?mId=${mangaId}`
         );
       } else {
         const nextVolume = +currentVolume + 1;
@@ -194,7 +203,7 @@ export const MangaRead = () => {
           const nextMinChapterNumber = Math.min(...chapterNumbers);
           const nextChapterVolumeObj = nextVolumeObj.chapters[nextMinChapterNumber];
           navigate(
-            `/manga/${mangaName}/chapter-${nextChapterVolumeObj.chapter}/${nextChapterVolumeObj.id}`
+            `/manga/${mangaName}/chapter-${nextChapterVolumeObj.chapter}/${nextChapterVolumeObj.id}?mId=${mangaId}`
           );
         } else {
           // setShowPaginate({...showPaginate, [action]: false})

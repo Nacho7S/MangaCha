@@ -78,14 +78,14 @@ export const Navbars = () => {
     if (search.search === "") {
       // If search is empty, delete the 'search' parameter
       navigate("/");
-      setSearchParams((params) => {
-        params.delete("search");
-        return params;
-      });
+      // setSearchParams((params) => {
+      //   params.delete("search");
+      //   return params;
+      // });
     } else {
       // If search is not empty, set the 'search' parameter
-      navigate("/manga/search");
-      setSearchParams({ search: search.search });
+      navigate(`/manga/search?search=${search.search}`);
+      // setSearchParams({ search: search.search });
       localStorage.setItem("search", search.search);
     }
   };
