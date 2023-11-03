@@ -7,6 +7,7 @@ export const Paginations = ({ totalPages, handlePageChange, pageQuery }) => {
   return (
     <div className="div-pagination">
       <ReactPaginate
+        forcePage={+pageQuery - 1}
         pageCount={totalPages}
         pageRangeDisplayed={5}
         marginPagesDisplayed={2}

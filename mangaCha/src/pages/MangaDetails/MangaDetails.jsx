@@ -90,7 +90,7 @@ export default function MangaDetails() {
             {Object.keys(volume.chapters).map((chapterNumber) => {
               const chapter = volume.chapters[chapterNumber];
               return (
-                <li onClick={() => navigate(`/manga/${slugDetails}/chapter-${chapter.chapter}/${chapter.id}`)} className="chapter" key={chapterNumber}>
+                <li onClick={() => navigate(`/manga/${slugDetails}/chapter-${chapter.chapter}/${chapter.id}?mId=${mangaId}`)} className="chapter" key={chapterNumber}>
                   Chapter {chapterNumber}
                 </li>
               );

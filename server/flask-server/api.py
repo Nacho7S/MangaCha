@@ -7,6 +7,7 @@ from helper.jwt import sign_token, verify_token
 from flask_cors import CORS
 from middleware.Authentication import token_required
 import requests
+from config.redis import r
 
 app = Flask(__name__)
 CORS(app)
@@ -187,6 +188,7 @@ def addFavouriteManga(currentUser):
         print(request.form)
         result = Model.addMangaFavourites(json.dumps(request.form), currentUser)
         if result == "success":
+            r.delete('mangaFav')
             return jsonify({"message": "successfully added favourite manga"}), 201
         elif "Error" in result:
             if "Duplicate Key" in str(result["Error"]):
@@ -204,6 +206,7 @@ def removeFavouriteManga(currentUser):
         print(request.form)
         result = Model.removeMangaFromFavourites(json.dumps(request.form), currentUser)
         if result == "Success":
+            r.delete('mangaFav')
             return (
                 jsonify({"message": "successfully removed from favourite manga"}),
                 200,
@@ -223,23 +226,41 @@ def getAllFavouriteMangas(currentUser):
     offset = 0
     if offsetQuery :
         offset = offsetQuery
-    print(offsetQuery)
-    mangas = Model.getAllFavouriteMangasByUserId(currentUser.id, limit, offset)
-    print (mangas, "mangas")
-    data = []
-    for i in mangas['mangasList']:
-        mangaId = i["mangaId"]
-        urlDetails = f"https://api.mangadex.org/manga/{mangaId}?includes%5B%5D=manga&includes%5B%5D=cover_art&includes%5B%5D=author&includes%5B%5D=artist&includes%5B%5D=tag&includes%5B%5D=creator"
+    # print(offsetQuery)
+    cachedMangaFav = None
+    if r.get('mangaFav'):
+        cachedMangaFav = json.loads(r.get('mangaFav'))
+    # r.flushall()
+    if cachedMangaFav and offset == 0 and offset == cachedMangaFav['offset']:
+        print("masuk")
+        # print(cachedMangaFav, "ini cache nya")
+        return jsonify(cachedMangaFav), 201
+    elif offset != 0 or offset == 0 and cachedMangaFav == None or offset != cachedMangaFav['offset']:
+        # r.delete('mangaFav')
+        mangas = Model.getAllFavouriteMangasByUserId(currentUser.id, limit, offset)
+        print (mangas, "mangas")
+        data = []
+        for i in mangas['mangasList']:
+            mangaId = i["mangaId"]
+            urlDetails = f"https://api.mangadex.org/manga/{mangaId}?includes%5B%5D=manga&includes%5B%5D=cover_art&includes%5B%5D=author&includes%5B%5D=artist&includes%5B%5D=tag&includes%5B%5D=creator"
 
-        try:
-            responseDetails = requests.get(urlDetails)
-            if responseDetails.status_code == 200:
-                dataDetails = responseDetails.json()
-                data.append(dataDetails)
-        except requests.exceptions.RequestException as e:
-            return jsonify({"error": str(e)}), 500
+            try:
+                responseDetails = requests.get(urlDetails)
+                if responseDetails.status_code == 200:
+                    dataDetails = responseDetails.json()
+                    data.append(dataDetails)
+            except requests.exceptions.RequestException as e:
+                return jsonify({"error": str(e)}), 500
+            
+        manga_fav_data = {
+            "mangaList": data,
+            "totalData": mangas['totalData'],
+            "limit": limit,
+            "offset": offset,
+        }
+        r.set('mangaFav', json.dumps(manga_fav_data))
+        return jsonify({"mangaList": data, "totalData": mangas['totalData'], "limit": limit, "offset": offset}), 201
 
-    return jsonify({"mangaList": data, "totalData": mangas['totalData'], "limit": limit, "offset": offset})
 
 
 if __name__ == "__main__":

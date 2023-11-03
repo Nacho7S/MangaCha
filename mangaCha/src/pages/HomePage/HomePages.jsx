@@ -16,52 +16,58 @@ export default function HomePages() {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const sessionMangaStorage = JSON.parse(sessionStorage.getItem("%"))
 
+  // useEffect(() => {
+    // if (!pageQuery) {
+    //   navigate(`/?page=${currentPage}`)
+    // }
+  //   if (pageQuery) {
+  //     fetchMangasPage(pageQuery);
+  //   }
+  // }, [currentPage,pageQuery]);
 
   useEffect(() => {
-  if (pageQuery) {
-    fetchMangasPage(pageQuery);
-  }
-}, [pageQuery]);
-
-useEffect(() => {
-  fetchMangasPage(currentPage);
-}, [currentPage]);
-
+    if (pageQuery) {
+      fetchMangasPage(pageQuery);
+    } else {
+      fetchMangasPage(currentPage);
+    }
+  }, [currentPage, pageQuery]);
+  
   useEffect(() => {
-    setTotalPages(Math.ceil(mangas.total / mangas.limit));
+    sessionStorage.setItem("%", JSON.stringify({ l: mangas.limit , t: mangas.total}))
+    setTotalPages(Math.ceil(sessionMangaStorage?.t / sessionMangaStorage?.l));
   }, [mangas]);
 
   const fetchMangasPage = (page) => {
     console.log(page, " ini page");
-    let offset = (page - 1) * mangas.limit;
+    let offset = (page - 1) * sessionMangaStorage?.l;
     console.log(offset, "offset");
-    // if (offset > 0) {
-    //   offset++;
-    // }
+    if (offset === NaN) {
+      offset = 0
+    }
 
-    dispatch(fetchMangas("", offset));
+    dispatch(fetchMangas("", offset ));
   };
 
   const handlePageChange = (selectedPage) => {
     const pages = selectedPage.selected + 1;
     console.log(pages, "pages");
-    // if (pageQuery) {
-    //   setCurrentPage(pageQuery);
-    //   navigate(`/?page=${pageQuery}`);
-    // }
-    // if (+pageQuery !== +pages) {
+    if (pageQuery) {
+      setCurrentPage(pageQuery);
+      navigate(`/?page=${pageQuery}`);
+    }
+    if (+pageQuery !== +pages) {
       setCurrentPage(pages);
-    //   navigate(`/?page=${pages}`);
-    // }
+      navigate(`/?page=${pages}`);
+    }
   };
-  console.log(mangasLoading);
+  // console.log(mangasLoading);
 
   return (
     <>
-      <div className="background-set bg-dark">
-
-      </div>
+      <div className="background-set bg-dark"></div>
       {mangasLoading ? (
         <Preloader />
       ) : (
@@ -71,15 +77,14 @@ useEffect(() => {
               <MangaComponent manga={manga} />
             ))}
           </div>
+          <Paginations
+            className={mangasLoading ? "preloader-paginate" : ""}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
+            pageQuery={pageQuery || currentPage}
+          />
         </>
       )}
-      <Paginations
-        className={mangasLoading ? "preloader-paginate" : ""}
-        totalPages={totalPages}
-        handlePageChange={handlePageChange}
-        pageQuery={pageQuery}
-        
-      />
       <Outlet />
     </>
   );
