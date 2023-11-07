@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-
 import {
   fetchChapter,
   fetchMangaDetails,
@@ -13,7 +10,6 @@ import "./MangaRead.css";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Preloader from "../../components/Preloaders/Preloader";
 import { BackButton } from "../../components/backButton/BackButton";
-import HomeCarousel from "../../components/CarouselManga/MangaCarousel";
 import { PrevButton } from "../../components/paginationMangaRead/prev";
 import { NextButton } from "../../components/paginationMangaRead/next";
 import scrollToTop from "../../utils/AutoScroll";
@@ -474,15 +470,6 @@ export const MangaRead = ({ qualitySpeed }) => {
             </div>
           </div>
           <div className="manga-page">{renderImages()}</div>
-          {/* <HomeCarousel
-              data={chapterImgData}
-              dataSaver={chapterImgDataSaver}
-            quality={qualitySpeed || quality}
-            hash={hash}
-            chapter={mangaDexChapter}
-            page={focusedIndex}
-          /> */}
-          {/* {renderPaginationManga()} */}
         </div>
       )}
     </>
