@@ -13,26 +13,137 @@
 .title-chapter{
   padding-top: 3%;
   padding-left: 2%;
+  display: flex;
+  flex-direction: column;
 }
 
+.header{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3vh;
+  padding-top: 5vh;
+}
 
 .manga-page{
-  justify-content: center;
-  width: 90%;
-  padding-left: 10%;
-  flex-wrap: wrap;
+  /* justify-content: center; */
+  display: grid;  
+  grid-template-columns: auto auto auto;
+  gap: 2vh;
+  width: 100%;
+  padding-left: 10vh;
+  padding-right: 10vh;
+  /* flex-wrap: wrap; */
+  padding-bottom: 5vh;
 }
 
+@media only screen and (max-width: 1200px) {
+  .manga-page{
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 1vh;
+    padding-left: 2vh;
+    padding-right: 2vh;
+  }
+
+  .manga-panel span {
+    position: absolute;
+    background-color: orange;
+    color: black;
+    /* width: 19%; */
+    text-align: center;
+    font-size: medium;
+    padding-bottom: 5%;
+    padding-top: 3%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-weight: bold;
+    font-family: sans-serif;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+}
+
+
 .manga-panel{
-  width: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  flex-direction: row;
+}
+
+.hide {
+  /* opacity: 0%; */
+  display: none;
+}
+
+.manga-panel img {
+  width: 90%;
+  /* border-radius: 15px; */
+  filter: brightness(100%); 
+  /* transition: filter 0.3s;  */
+}
+
+/* .manga-panel:hover img {
+  filter: brightness(50%); 
+} */
+
+
+
+/* .manga-panel span {
+  position: absolute;
+  background-color: orange;
+  color: black;
+  width: 19%;
+  text-align: center;
+  font-size: x-large;
+  padding-bottom: 5%;
+  padding-top: 3%;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  font-weight: bold;
+  font-family: sans-serif;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.manga-panel:hover span {
+  opacity: 1;
+  z-index: 100;
+} */
+
+.option-box{
+  border: 2px solid orange;
+  width: 25%;
+  border-radius: 15px;
+  padding: 1vh;
+  margin-right: 4vh;
+}
+
+.option-box select {
+  background-color: orange;
+  color: #212529;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 5px 10px; /* Add padding for better appearance */
+  border: none; /* Remove default border */
+  outline: none; /* Remove default focus outline */
+  cursor: pointer; /* Show pointer cursor on hover */
+  width: 40%; /* Make the select element fill the container */
+  box-sizing: border-box; /* Include padding and border in width/height */
+}
+
+
+.font-bold{
+  font-weight: bold;
+  color: black;
 }
 
 .settings-quality{
   color: orange;
   display: flex;
   flex-direction: row;
-  justify-content: end;
-  padding-right: 18%;
+  justify-content: start;
+  /* padding-right: 18%; */
 }
 
 .settings-quality:hover{
@@ -43,7 +154,8 @@
 .menu-quality{
   background-color: #262626;
   position: absolute;
-  margin-left: 81.1%;
+  margin-left: 2vh;  
+  margin-top: -21vh;
 } 
 
 .quality-text{
@@ -80,8 +192,13 @@
 }
 
 .manga-pagination{
-  gap: 10vh;
+  gap: 2vh;
   margin-top: 1.3vh;
   padding-bottom: 3vh;
   justify-content: center;
+}
+
+.manga-pagination div {
+  overflow: hidden;
+  border-radius: 5px;
 }
