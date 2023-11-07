@@ -4,13 +4,12 @@ import { MangaRead } from '../pages/MangaRead/MangaRead';
 // import 'react-internet-speed-meter/dist/index.css';
 
 export const TrackSpeedInternet = () => {
-  const [quality, setQuality] = useState('highQuality'); // Default to high quality
+  const [quality, setQuality] = useState(''); 
 
   const handleSpeedTest = (speed) => {
-    // Check the internet speed and set the quality accordingly
-    if (speed >= 40) {
+    if (speed >= 6) { //mbps cuy
       setQuality('highQuality');
-    } else if (speed <= 10) {
+    } else if (speed <= 5) {
       setQuality('lowQuality');
     }
   };
@@ -22,11 +21,11 @@ export const TrackSpeedInternet = () => {
       outputType="alert"
       customClassName={null}
       txtMainHeading=""
-      pingInterval={30000} // milliseconds
+      pingInterval={60000} // milliseconds
       thresholdUnit="megabyte" // "byte", "kilobyte", "megabyte"
       threshold={100}
       imageUrl="https://i.pinimg.com/564x/0e/63/85/0e6385d2189bae35b2e84ddfc0a80d3c.jpg"
-      downloadSize="1781287" // bytes
+      downloadSize="178128" // bytes
       callbackFunctionOnNetworkDown={(speed) => console.log(`Internet speed is down ${speed}`)}
       callbackFunctionOnNetworkTest={(speed) => handleSpeedTest(speed)}
       />
