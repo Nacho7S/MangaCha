@@ -38,9 +38,11 @@ export const MangaRead = ({ qualitySpeed }) => {
     next: true,
     previous: true,
   });
+  const [loadingPanel, setLoadingPanel] = useState(false)
   const [showPaginatePanel, setShowPaginatePanel] = useState({
     next: true,
     previous: true,
+    loading: false
   });
   const [quality, setQuality] = useState({
     value: "highQuality",
@@ -96,22 +98,37 @@ export const MangaRead = ({ qualitySpeed }) => {
   // console.log(window.location.pathname === `/manga/${mangaName}/${chapter}/${chapterId}`);
   // console.log(window.location.pathname);
 
+  const reRenderChapter = () => {
+    // console.log(manga?.chapters?.volumes);
+    const volumes = manga?.chapters?.volumes;
+    const currentVolume = chapters?.dataChapters?.data.attributes.volume
+    const volume = volumes[currentVolume]
+    const currentChapterRenderFix = volume?.chapters[currentVolume]
+    const currentChapterRenderFixNum = currentChapterRenderFix?.chapter
+    const selectedChapterToFix = currentChapterRenderFix?.others[0]
+    navigate(`/manga/${mangaName}/chapter-${currentChapterRenderFixNum}/${selectedChapterToFix}?mId=${mangaId}`)
+    console.log(currentChapterRenderFixNum);
+    console.log(selectedChapterToFix);
+    // console.log(`/manga/${mangaName}/chapter-${currentChapterRenderFixNum}/${selectedChapterToFix}?mId=${mangaId}`);
+
+  }
+
   const renderImages = () => {
     if (quality.value === "highQuality" || qualitySpeed === "highQuality") {
       return (
         <>
-          {quality.loading || chaptersLoading ? (
+          {quality.loading || chaptersLoading || loadingPanel? (
             <Preloader />
           ) : (
             <>
-              {chapterImgData
-                ?.filter((img, i) => i === focusedIndex)
-                ?.map((img, index) => (
-                  <div className={`manga-panel`}>
-                    <span>Page {index + 1}</span>
-                    <img key={index} src={`${mangaDexChapter}${hash}/${img}`} />
-                  </div>
-                ))}
+                {chapterImgData?.length > 0 ? chapterImgData
+                  ?.filter((img, i) => i === focusedIndex)
+                  ?.map((img, index) => {
+                    return (<div className={`manga-panel`}>
+                      <span>Page {index + 1}</span>
+                      <img key={index} src={`${mangaDexChapter}${hash}/${img}`} />
+                    </div>)
+                  }) : <button onClick={reRenderChapter}>Retry</button> }
             </>
           )}
         </>
@@ -121,7 +138,7 @@ export const MangaRead = ({ qualitySpeed }) => {
     if (quality.value === "lowQuality" || qualitySpeed === "lowQuality") {
       return (
         <>
-          {quality.loading || chaptersLoading ? (
+          {quality.loading || chaptersLoading || loadingPanel? (
             <Preloader />
           ) : (
             chapterImgDataSaver
@@ -288,9 +305,16 @@ export const MangaRead = ({ qualitySpeed }) => {
   };
 
   const renderPageList = () => {
-    const onChangePage = (e) => {
+    const onChangePage = async (e) => {
       const { value } = e.target;
-      setFocusedIndex(+value);
+      setLoadingPanel(true)
+      try {
+        await setFocusedIndex(+value);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoadingPanel(false)
+      }
     };
 
     return (
@@ -332,22 +356,36 @@ export const MangaRead = ({ qualitySpeed }) => {
     const dataimg = chapterImgData || chapterImgDataSaver;
     // console.log(dataimg);
     if (action === "next") {
-      await setFocusedIndex(focusedIndex + 1);
-      // console.log(dataimg.length < focusedIndex);
-      scrollToTop()
-      if (dataimg.length - 1 <= focusedIndex) {
-        await handleChangeChapter("next");
-        await setFocusedIndex(0);
-        // window.scrollTo({ top: 0, behavior: "smooth" })
+      setLoadingPanel(true)
+      try {
+        await setFocusedIndex(focusedIndex + 1);
+        // console.log(dataimg.length < focusedIndex);
+        scrollToTop()
+        if (dataimg.length - 1 <= focusedIndex) {
+          await handleChangeChapter("next");
+          await setFocusedIndex(0);
+          // window.scrollTo({ top: 0, behavior: "smooth" })
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoadingPanel(false)
       }
     }
     if (action === "previous") {
-      await setFocusedIndex(focusedIndex - 1);
-      scrollToTop()
-      if (focusedIndex <= 0) {
-        // alert("oops")
-        await handleChangeChapter("previous");
-        await setFocusedIndex(0);
+      setLoadingPanel(true)
+      try {
+        await setFocusedIndex(focusedIndex - 1);
+        scrollToTop()
+        if (focusedIndex <= 0) {
+          // alert("oops")
+          await handleChangeChapter("previous");
+          await setFocusedIndex(0);
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoadingPanel(false)
       }
     }
   };

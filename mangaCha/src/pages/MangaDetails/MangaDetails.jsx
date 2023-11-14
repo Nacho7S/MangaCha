@@ -76,6 +76,7 @@ export default function MangaDetails() {
 
   const renderChapterList = () => {
     const volumes = manga?.chapters?.volumes;
+    console.log(manga);
 
     if (!volumes) {
       return null;

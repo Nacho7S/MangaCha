@@ -33,7 +33,7 @@ export const FavouritePages = () => {
 
   useEffect(() => {
     sessionStorage.setItem("%f", JSON.stringify({l: favourites.limit, t: favourites.totalData}))
-    setTotalPages(Math.ceil(sessionMangaFavStorage.t / sessionMangaFavStorage.l));
+    setTotalPages(Math.ceil(sessionMangaFavStorage?.t / sessionMangaFavStorage?.l));
   }, [favourites]);
 
   const fetchMangasPage = (page) => {

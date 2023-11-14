@@ -201,4 +201,5 @@
 .manga-pagination div {
   overflow: hidden;
   border-radius: 5px;
+  /* height: auto; */
 }
